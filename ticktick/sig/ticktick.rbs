@@ -1,0 +1,59 @@
+# Classes
+class List
+  def initialize: (name: String) -> void
+end
+
+module TaskManageable
+  attr_reader tasks: Tasks
+  def add_task: (title: String, ?deadline: Time?) -> void
+  def done: (String title) -> void
+end
+
+class TaskList < List
+  include TaskManageable
+  @name: String
+  @tasks: Tasks
+
+  def initialize: (name: String) -> void
+end
+
+class NoteList < List
+  attr_reader notes: Notes
+  def initialize: (name: String) -> void
+  def add_note: (title: String, ?deadline: Time?) -> void
+end
+
+class ListItem
+  attr_reader title: String
+  def initialize: (title: String, ?deadline: Time?) -> void
+end
+
+class Task < ListItem
+  include TaskManageable
+  @tasks: Tasks
+  @title: String
+
+  def initialize: (title: String, ?deadline: Time?) -> void
+end
+
+class Tasks
+  @tasks: Array[Task]
+
+  def initialize: (?Array[Task] tasks) -> void
+  def <<: (Task task) -> void
+  def delete: (Task task) -> void
+  def find_by_title: (String title) -> Task?
+end
+
+class Note < ListItem
+  @title: String
+  @deadline: Time
+end
+
+class Notes
+  @notes: Array[Note]
+
+  def initialize: (?Array[Note] notes) -> void
+  def <<: (Note note) -> void
+  def delete_by_title: (String title) -> void
+end

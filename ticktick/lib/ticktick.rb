@@ -7,22 +7,23 @@ end
 module TaskManageable
   attr_reader :tasks
 
-  def initialize(*args, **kargs)
-    super(*args, **kargs)
-    @tasks = Tasks.new
-  end
-
   def add_task(title:, deadline: nil)
     @tasks << Task.new(title: title, deadline: deadline)
   end
 
   def done(title)
-    @tasks.delete(@tasks.find_by_title(title))
+    task = @tasks.find_by_title(title)
+    @tasks.delete(task) if task
   end
 end
 
 class TaskList < List
   include TaskManageable
+
+  def initialize(name:)
+    super(name: name)
+    @tasks = Tasks.new
+  end
 end
 
 class NoteList < List
@@ -49,6 +50,10 @@ end
 
 class Task < ListItem
   include TaskManageable
+
+  def initialize(title:, deadline: nil)
+    @tasks = Tasks.new
+  end
 end
 
 class Tasks
@@ -88,8 +93,12 @@ end
 
 task_list = TaskList.new(name: '資産運用システム')
 task_list.add_task(title: 'CI/CDの整備')
-task_list.tasks.find_by_title('CI/CDの整備').add_task(title: 'CircleCIの設定', deadline: Time.now + 60 * 60 * 24 * 7)
-task_list.tasks.find_by_title('CI/CDの整備').done('CircleCIの設定')
+task = task_list.tasks.find_by_title('CI/CDの整備')
+
+if task
+  task.add_task(title: 'CircleCIの設定', deadline: Time.now + 60 * 60 * 24 * 7)
+  task.done('CircleCIの設定')
+end
 
 note_list = NoteList.new(name: '買い物リスト')
 note_list.add_note(title: '牛乳')
